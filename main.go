@@ -4,12 +4,11 @@ import (
 	img "image"
 	"image/color"
 	"image/png"
-	"math"
 	"math/cmplx"
 	"os"
 )
 
-var maxIter int = 512
+var maxIter int = 80
 
 var myColorScheme = []color.Color{
 	color.RGBA{14, 55, 15, 255},
@@ -29,24 +28,18 @@ func iterate(c complex128) int {
 	return maxIter
 }
 
-func calcColor(nIterations int, nColors int) int {
-	maxLog := math.Log(float64(maxIter))
-	colorIdx := (nColors - 1) * int(math.Log(float64(nIterations))/maxLog)
-	return colorIdx
-}
-
 func main() {
 
-	width := 10000
-	height := 10000
+	width := 1000
+	height := 1000
 
 	image := img.NewRGBA(img.Rectangle{
 		img.Point{0, 0},
 		img.Point{width, height},
 	})
 
-	var xmin float64 = -1.2
-	var xmax float64 = 1.2
+	var xmin float64 = -1.6
+	var xmax float64 = 0.7
 	var ymin float64 = -1.2
 	var ymax float64 = 1.2
 
@@ -61,8 +54,8 @@ func main() {
 			xv := xmin + (xmax-xmin)*wFloat/widthFloat
 			yv := ymin + (ymax-ymin)*hFloat/heightFloat
 			nIterations = iterate(complex(xv, yv))
-			colorIdx := calcColor(nIterations, 4)
-			image.Set(w, h, myColorScheme[colorIdx])
+			colorInt := 255 - uint8(255*nIterations/maxIter)
+			image.Set(w, h, color.RGBA{colorInt, colorInt, colorInt, 255})
 		}
 	}
 
